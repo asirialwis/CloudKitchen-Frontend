@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+@plugin "daisyui" {
+
+  themes: light --default , dark 
+  
+ }
+
+ /* @utility btn {
+  @apply rounded-full;
+} */
