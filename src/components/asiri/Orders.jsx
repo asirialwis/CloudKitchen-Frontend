@@ -1,6 +1,6 @@
 // src/pages/main/Orders.jsx
 import React, { useState, useEffect } from 'react';
-import { fetchCustomerOrders } from '../../api/ordersAPI';
+import { fetchCustomerOrders } from '../../api-calls/ordersAPI';
 import { logout } from '../../auth/auth';
 
 const Orders = () => {
