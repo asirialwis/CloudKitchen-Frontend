@@ -2,7 +2,7 @@
 @import "tailwindcss";
 
 @plugin "daisyui" {
-  themes: business --default, dark;
+  themes: light --default, dark;
 }
 
 /* Set Poppins as default font */
