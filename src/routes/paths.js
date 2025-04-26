@@ -7,6 +7,7 @@ const AdminMain = lazy(() => import("./section/admin-main"));
 
 // Main Pages
 const Home = lazy(() => import("../pages/main/home"));
+const Order = lazy(() => import("../pages/main/order"));
 
 // Admin Pages
 const AdminOverview = lazy(() => import("../pages/admin/admin-overview"));
@@ -24,6 +25,10 @@ export const router = createBrowserRouter([
       {
         index: true,
         Component: Home,
+      },
+      {
+        path: "order",
+        Component: Order,
       },
     ],
   },
