@@ -1,20 +1,17 @@
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-
-const ITEMS_PER_PAGE = 4;
+import { ChevronLeft } from "lucide-react";
 
 const Restaurant = () => {
   const { id } = useParams();
   const { state } = useLocation();
   const restaurantDetails = state?.restaurant;
   const [menuItems, setMenuItems] = useState([]);
-  const [restaurantName, setRestaurantName] = useState("");
-  const [currentPage, setCurrentPage] = useState({}); // { "Main Course": 0, "Wraps": 0, ... }
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchMenuItems = async () => {
-      // Mock data
       const allMenuItems = [
         {
           _id: "1",
@@ -57,17 +54,6 @@ const Restaurant = () => {
           price: 700,
           imageUrl:
             "https://i.pinimg.com/736x/c0/94/e0/c094e017caa0e1788c186906e420d17f.jpg",
-          category: "Main Course",
-          isAvailable: true,
-        },
-        {
-          _id: "10",
-          restaurantId: "1",
-          name: "Chicken Biryani",
-          description: "Spicy basmati rice with marinated chicken and herbs",
-          price: 950,
-          imageUrl:
-            "https://i.pinimg.com/1200x/b2/f3/69/b2f369286e98dcecedab6988d2a5bda3.jpg",
           category: "Main Course",
           isAvailable: true,
         },
@@ -166,34 +152,33 @@ const Restaurant = () => {
       );
 
       setMenuItems(filteredItems);
-
-      // Initialize page per category
-      const pages = {};
-      filteredItems.forEach((item) => {
-        if (!pages[item.category]) pages[item.category] = 0;
-      });
-      setCurrentPage(pages);
-
-      setRestaurantName("Mock Restaurant");
     };
 
     fetchMenuItems();
   }, [id]);
 
-  // Group menu items by category
   const groupedMenu = menuItems.reduce((acc, item) => {
     if (!acc[item.category]) acc[item.category] = [];
     acc[item.category].push(item);
     return acc;
   }, {});
 
-  if (menuItems.length === 0)
-    return <div className="p-8 text-center">No menu available 🍽️</div>;
+  const filteredMenuItems =
+    selectedCategory === "All"
+      ? Object.values(groupedMenu).flat()
+      : groupedMenu[selectedCategory] || [];
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="relative h-64 sm:h-48 overflow-hidden">
+        <button
+          onClick={() => navigate(-1)}
+          className="absolute top-4 left-4 bg-white text-[#fe5725] p-2 rounded-full shadow hover:bg-gray-100 transition z-10"
+        >
+          <ChevronLeft size={24} />
+        </button>
+
         <img
           src={restaurantDetails?.image}
           alt={restaurantDetails?.name}
@@ -208,85 +193,70 @@ const Restaurant = () => {
         </div>
       </div>
 
-      {/* Categories */}
-      <div className="max-w-7xl mx-auto p-6 space-y-12">
-        {Object.keys(groupedMenu).map((category) => {
-          const items = groupedMenu[category];
-          const startIndex = currentPage[category] * ITEMS_PER_PAGE;
-          const paginatedItems = items.slice(
-            startIndex,
-            startIndex + ITEMS_PER_PAGE
-          );
+      {/* Menu Section */}
+      <div className="max-w-7xl mx-auto p-6 space-y-8">
+        {/* Category Tags */}
+        <div className="flex overflow-x-auto whitespace-nowrap gap-3 mb-6 scrollbar-hide px-2">
+          <button
+            onClick={() => setSelectedCategory("All")}
+            className={`inline-flex items-center px-4 py-2 rounded-full text-sm ${
+              selectedCategory === "All"
+                ? "bg-[#fe5725] text-white"
+                : "bg-gray-200 text-gray-700"
+            }`}
+          >
+            All
+          </button>
+          {Object.keys(groupedMenu).map((category) => (
+            <button
+              key={category}
+              onClick={() => setSelectedCategory(category)}
+              className={`inline-flex items-center px-4 py-2 rounded-full text-sm ${
+                selectedCategory === category
+                  ? "bg-[#fe5725] text-white"
+                  : "bg-gray-200 text-gray-700"
+              }`}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
 
-          return (
-            <div key={category}>
-              <h2 className="text-2xl font-bold mb-4">{category}</h2>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {paginatedItems.map((food) => (
-                  <div
-                    key={food._id}
-                    className="bg-gray-50 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 cursor-pointer"
-                  >
-                    <img
-                      src={food.imageUrl}
-                      alt={food.name}
-                      className="w-full h-48 object-cover"
-                    />
-                    <div className="p-4">
-                      <h3 className="font-bold text-lg">{food.name}</h3>
-                      <p className="text-gray-600 text-sm mt-1">
-                        {food.description}
-                      </p>
-                      <div className="flex justify-between items-center mt-4">
-                        <span className="font-bold text-[#fe5725]">
-                          Rs. {food.price}
-                        </span>
-                        <button className="bg-[#fe5725] text-white px-4 py-2 rounded-full text-sm hover:bg-[#e04a20] transition">
-                          Add to Cart
-                        </button>
-                      </div>
-                    </div>
+        {/* Food Items */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {filteredMenuItems.length > 0 ? (
+            filteredMenuItems.map((food) => (
+              <div
+                key={food._id}
+                className="bg-gray-50 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 cursor-pointer"
+              >
+                <img
+                  src={food.imageUrl}
+                  alt={food.name}
+                  className="w-full h-48 object-cover"
+                />
+                <div className="p-4">
+                  <h3 className="font-bold text-lg">{food.name}</h3>
+                  <p className="text-gray-600 text-sm mt-1">
+                    {food.description}
+                  </p>
+                  <div className="flex justify-between items-center mt-4">
+                    <span className="font-bold text-[#fe5725]">
+                      Rs. {food.price}
+                    </span>
+                    <button className="bg-[#fe5725] text-white px-4 py-2 rounded-full text-sm hover:bg-[#e04a20] transition">
+                      Add to Cart
+                    </button>
                   </div>
-                ))}
-              </div>
-
-              {/* Pagination Buttons */}
-              {items.length > ITEMS_PER_PAGE && (
-                <div className="flex justify-center mt-6 space-x-4">
-                  <button
-                    onClick={() =>
-                      setCurrentPage((prev) => ({
-                        ...prev,
-                        [category]: Math.max(prev[category] - 1, 0),
-                      }))
-                    }
-                    disabled={currentPage[category] === 0}
-                    className="p-2 bg-gray-200 hover:bg-gray-300 rounded-full disabled:opacity-50"
-                  >
-                    <ChevronLeft size={20} />
-                  </button>
-
-                  <button
-                    onClick={() =>
-                      setCurrentPage((prev) => ({
-                        ...prev,
-                        [category]: prev[category] + 1,
-                      }))
-                    }
-                    disabled={
-                      (currentPage[category] + 1) * ITEMS_PER_PAGE >=
-                      items.length
-                    }
-                    className="p-2 bg-gray-200 hover:bg-gray-300 rounded-full disabled:opacity-50"
-                  >
-                    <ChevronRight size={20} />
-                  </button>
                 </div>
-              )}
+              </div>
+            ))
+          ) : (
+            <div className="col-span-4 text-center text-gray-500">
+              No items found 🍽️
             </div>
-          );
-        })}
+          )}
+        </div>
       </div>
     </div>
   );
