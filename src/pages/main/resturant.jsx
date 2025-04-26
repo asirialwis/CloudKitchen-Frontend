@@ -199,7 +199,7 @@ const Restaurant = () => {
         <div className="flex overflow-x-auto whitespace-nowrap gap-3 mb-6 scrollbar-hide px-2">
           <button
             onClick={() => setSelectedCategory("All")}
-            className={`inline-flex items-center px-4 py-2 rounded-full text-sm ${
+            className={`inline-flex items-center px-4 py-2 rounded-full text-sm cursor-pointer ${
               selectedCategory === "All"
                 ? "bg-[#fe5725] text-white"
                 : "bg-gray-200 text-gray-700"
@@ -211,7 +211,7 @@ const Restaurant = () => {
             <button
               key={category}
               onClick={() => setSelectedCategory(category)}
-              className={`inline-flex items-center px-4 py-2 rounded-full text-sm ${
+              className={`inline-flex items-center px-4 py-2 rounded-full text-sm cursor-pointer ${
                 selectedCategory === category
                   ? "bg-[#fe5725] text-white"
                   : "bg-gray-200 text-gray-700"
