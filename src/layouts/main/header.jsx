@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { signOut } from "../../auth/auth";
 import {
   ShoppingCart,
   Bell,
@@ -58,6 +59,16 @@ const Header = ({ user }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+
+  const  handleLogout = async () => {
+    try {
+      await signOut();
+      // The signOut function will handle the redirect
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+
   return (
     <header
       // style={{ backgroundColor: "#4CAF50" }}
@@ -90,6 +101,7 @@ const Header = ({ user }) => {
             user={user}
             isOpen={isProfileOpen}
             toggle={toggleProfile}
+            onLogout={handleLogout}
           />
         </div>
 
@@ -101,6 +113,7 @@ const Header = ({ user }) => {
               isOpen={isProfileOpen}
               toggle={toggleProfile}
               mobile
+              onLogout={handleLogout} 
             />
           </div>
         )}
@@ -155,7 +168,7 @@ const IconButton = ({ icon, count, onClick }) => (
 );
 
 // Profile Menu Component
-const ProfileMenu = ({ user, isOpen, toggle, mobile = false }) => (
+const ProfileMenu = ({ user, isOpen, toggle, mobile = false,onLogout }) => (
   <div className={`relative ${mobile ? "ml-2" : ""} profile-menu`}>
     <button
       onClick={toggle}
@@ -196,13 +209,14 @@ const ProfileMenu = ({ user, isOpen, toggle, mobile = false }) => (
           <Settings size={16} className="mr-2" />
           Settings
         </a>
-        <a
-          href="#"
-          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
-        >
-          <LogOut size={16} className="mr-2" />
-          Logout
-        </a>
+        <a></a>
+ <button
+ onClick={onLogout}
+ className="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+>
+ <LogOut size={16} className="mr-2" />
+ Logout
+</button>
       </div>
     )}
   </div>
