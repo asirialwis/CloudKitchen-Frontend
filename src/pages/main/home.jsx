@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Search, Phone, MapPin, ChevronRight } from "lucide-react";
 
 const Home = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
+  const navigate = useNavigate();
 
   // Sample data matching backend schema
   const categories = [
@@ -22,7 +24,8 @@ const Home = () => {
       description: "Authentic American burgers with premium ingredients",
       address: "123 Main St, Cityville",
       contactNumber: "+1 555-1234",
-      image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+      image:
+        "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
     },
     {
       id: 2,
@@ -30,7 +33,8 @@ const Home = () => {
       description: "Traditional Italian pizzas with wood-fired taste",
       address: "456 Oak Ave, Townsville",
       contactNumber: "+1 555-5678",
-      image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+      image:
+        "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
     },
     {
       id: 3,
@@ -38,7 +42,8 @@ const Home = () => {
       description: "Authentic Japanese sushi prepared by master chefs",
       address: "789 Fish Rd, Seaville",
       contactNumber: "+1 555-9012",
-      image: "https://images.unsplash.com/photo-1580822184713-fc5400e7fe10?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+      image:
+        "https://images.unsplash.com/photo-1580822184713-fc5400e7fe10?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
     },
     {
       id: 4,
@@ -46,7 +51,8 @@ const Home = () => {
       description: "Artisanal desserts and pastries made daily",
       address: "321 Sugar Lane, Sweetville",
       contactNumber: "+1 555-3456",
-      image: "https://images.unsplash.com/photo-1551218808-94e220e084d2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+      image:
+        "https://images.unsplash.com/photo-1551218808-94e220e084d2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
     },
     {
       id: 5,
@@ -54,7 +60,8 @@ const Home = () => {
       description: "Healthy organic meals for mindful eating",
       address: "654 Veggie Blvd, Healthtown",
       contactNumber: "+1 555-7890",
-      image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+      image:
+        "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
     },
     {
       id: 6,
@@ -62,12 +69,13 @@ const Home = () => {
       description: "Mexican street food with authentic flavors",
       address: "987 Spice Street, Mexicoville",
       contactNumber: "+1 555-2345",
-      image: "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+      image:
+        "https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80",
     },
   ];
 
-  const handleRestaurantClick = (restaurantId) => {
-    console.log(`Redirecting to menu for restaurant ${restaurantId}`);
+  const handleRestaurantClick = (restaurant) => {
+    navigate(`/restaurant/${restaurant.id}`, { state: { restaurant } });
   };
 
   return (
@@ -131,7 +139,7 @@ const Home = () => {
             <div
               key={restaurant.id}
               className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 cursor-pointer group"
-              onClick={() => handleRestaurantClick(restaurant.id)}
+              onClick={() => handleRestaurantClick(restaurant)}
             >
               <div className="relative h-48 overflow-hidden">
                 <img
@@ -144,7 +152,9 @@ const Home = () => {
                 <h3 className="font-bold text-lg mb-2 group-hover:text-[#fe5725] transition-colors duration-200">
                   {restaurant.name}
                 </h3>
-                <p className="text-gray-600 text-sm mb-3">{restaurant.description}</p>
+                <p className="text-gray-600 text-sm mb-3">
+                  {restaurant.description}
+                </p>
                 <div className="flex items-center text-gray-500 text-sm mb-2 group-hover:text-gray-600 transition-colors duration-200">
                   <MapPin size={16} className="mr-2" />
                   <span>{restaurant.address}</span>
