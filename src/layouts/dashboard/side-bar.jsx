@@ -29,6 +29,21 @@ const Sidebar = () => {
   const location = useLocation();
 
   useEffect(() => {
+    const stored = localStorage.getItem("sidebarCollapsed");
+    const initialCollapse = stored
+      ? JSON.parse(stored)
+      : window.innerWidth >= 768;
+    setIsCollapsed(initialCollapse);
+
+    // Dispatch initial state
+    window.dispatchEvent(
+      new CustomEvent("sidebarToggle", {
+        detail: { isCollapsed: initialCollapse },
+      })
+    );
+  }, []);
+
+  useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);

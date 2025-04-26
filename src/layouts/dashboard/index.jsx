@@ -1,19 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Sidebar from "./side-bar";
 
 const DashboardLayout = ({ children }) => {
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
   useEffect(() => {
+    // Initialize from localStorage
+    const storedCollapse = localStorage.getItem("sidebarCollapsed");
+    const initialCollapse = storedCollapse ? JSON.parse(storedCollapse) : false;
+    setSidebarCollapsed(initialCollapse);
+
     const handleSidebarToggle = (e) => {
-      const mainContent = document.querySelector("main");
-      if (mainContent) {
-        if (e.detail.isCollapsed) {
-          mainContent.classList.add("md:ml-20");
-          mainContent.classList.remove("md:ml-64");
-        } else {
-          mainContent.classList.add("md:ml-64");
-          mainContent.classList.remove("md:ml-20");
-        }
-      }
+      setSidebarCollapsed(e.detail.isCollapsed);
     };
 
     window.addEventListener("sidebarToggle", handleSidebarToggle);
@@ -26,7 +24,11 @@ const DashboardLayout = ({ children }) => {
   return (
     <div className="flex min-h-screen">
       <Sidebar />
-      <main className="flex-grow p-6 bg-gray-100 md:ml-64 transition-all duration-300">
+      <main
+        className={`flex-grow p-6 bg-gray-100 transition-all duration-300 ${
+          sidebarCollapsed ? "md:ml-20" : "md:ml-64"
+        }`}
+      >
         {children}
       </main>
     </div>
