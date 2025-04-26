@@ -1,10 +1,10 @@
 import React from "react";
+import Orders from "../../components/asiri/Orders";
 
 const Order = () => {
   return (
     <div>
-      <h1>Order Page</h1>
-      <p>Welcome to the Order page!</p>
+      <Orders/>
     </div>
   );
 };
