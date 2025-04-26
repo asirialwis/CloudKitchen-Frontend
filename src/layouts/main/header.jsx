@@ -18,6 +18,7 @@ const Header = ({ user }) => {
   const [cartItems, setCartItems] = useState(2);
   const [activeOrders, setActiveOrders] = useState(1);
   const [isMobile, setIsMobile] = useState(false);
+  const navigate = useNavigate();
 
   // Check screen size on resize
   useEffect(() => {
@@ -57,8 +58,6 @@ const Header = ({ user }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const navigate = useNavigate();
-
   return (
     <header
       // style={{ backgroundColor: "#4CAF50" }}
@@ -80,7 +79,11 @@ const Header = ({ user }) => {
 
         {/* Desktop Icons */}
         <div className="hidden md:flex items-center space-x-2">
-          <IconButton icon={<ClipboardList size={20} />} count={activeOrders} />
+          <IconButton
+            icon={<ClipboardList size={20} />}
+            count={activeOrders}
+            onClick={() => navigate("/order")}
+          />
           <IconButton icon={<ShoppingCart size={20} />} count={cartItems} />
           <IconButton icon={<Bell size={20} />} count={notifications} />
           <ProfileMenu
@@ -111,6 +114,9 @@ const Header = ({ user }) => {
               <MobileMenuItem
                 icon={<ClipboardList size={20} className="text-gray-700" />}
                 label={`Orders (${activeOrders})`}
+                onClick={() => {
+                  navigate("/order");
+                }}
               />
               <MobileMenuItem
                 icon={<ShoppingCart size={20} className="text-gray-700" />}
@@ -134,8 +140,11 @@ const Header = ({ user }) => {
 };
 
 // Reusable Icon Button Component
-const IconButton = ({ icon, count }) => (
-  <button className="relative p-2 rounded-full hover:bg-[#fe5725] hover:bg-opacity-100 transition cursor-pointer">
+const IconButton = ({ icon, count, onClick }) => (
+  <button
+    onClick={onClick}
+    className="relative p-2 rounded-full hover:bg-[#fe5725] hover:bg-opacity-100 transition cursor-pointer"
+  >
     {icon}
     {count > 0 && (
       <span className="absolute -top-1 -right-1 bg-white text-[#fe5725] text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
