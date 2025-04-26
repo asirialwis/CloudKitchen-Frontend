@@ -44,12 +44,19 @@ const Sidebar = () => {
   }, [isCollapsed]);
 
   const toggleSidebar = () => {
-    setIsCollapsed(!isCollapsed);
+    const newState = !isCollapsed;
+    setIsCollapsed(newState);
+
+    // Dispatch custom event
+    window.dispatchEvent(
+      new CustomEvent("sidebarToggle", {
+        detail: { isCollapsed: newState },
+      })
+    );
   };
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
-    // Prevent background scrolling when sidebar is open
     document.body.style.overflow = isMobileMenuOpen ? "auto" : "hidden";
   };
 
@@ -74,7 +81,8 @@ const Sidebar = () => {
       {isMobile && (
         <button
           onClick={toggleMobileMenu}
-          className="fixed top-4 left-4 z-50 p-2 rounded-lg bg-amber-600 text-white md:hidden"
+          style={{ backgroundColor: "#fe5725" }}
+          className="fixed top-4 left-4 z-50 p-2 rounded-lg text-white md:hidden"
         >
           {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
@@ -102,7 +110,10 @@ const Sidebar = () => {
                 : "items-center"
             } border-b border-gray-700`}
           >
-            <div className="w-10 h-10 rounded-full bg-amber-600 flex items-center justify-center text-white font-bold">
+            <div
+              style={{ backgroundColor: "#fe5725" }}
+              className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold"
+            >
               CK
             </div>
             {(!isCollapsed || isMobile) && (
@@ -120,26 +131,39 @@ const Sidebar = () => {
                 <li key={item.path}>
                   <Link
                     to={item.path}
-                    className={`flex items-center p-3 rounded-lg transition-colors
-                      ${
-                        location.pathname === item.path
-                          ? "bg-amber-600 text-white"
-                          : "hover:bg-gray-700"
-                      }
+                    style={
+                      location.pathname === item.path
+                        ? {
+                            backgroundColor: "#fe5725",
+                            color: "white",
+                          }
+                        : {}
+                    }
+                    className={`flex items-center p-3 rounded-lg transition-colors hover:bg-gray-700
                       ${isCollapsed && !isMobile ? "justify-center" : ""}`}
                     onClick={() => isMobile && setIsMobileMenuOpen(false)}
                   >
                     <span
-                      className={`${
-                        location.pathname === item.path
-                          ? "text-white"
-                          : "text-amber-400"
-                      }`}
+                      style={{
+                        color:
+                          location.pathname === item.path ? "white" : "#fe5725",
+                        opacity: location.pathname === item.path ? 1 : 0.8,
+                      }}
                     >
                       {item.icon}
                     </span>
                     {(!isCollapsed || isMobile) && (
-                      <span className="ml-3">{item.label}</span>
+                      <span
+                        className="ml-3"
+                        style={{
+                          color:
+                            location.pathname === item.path
+                              ? "white"
+                              : "inherit",
+                        }}
+                      >
+                        {item.label}
+                      </span>
                     )}
                   </Link>
                 </li>
@@ -147,28 +171,28 @@ const Sidebar = () => {
             </ul>
           </nav>
 
-          {/* Collapse Button */}
-          <div className="p-4 border-t border-gray-700">
-            <button
-              onClick={toggleSidebar}
-              className="w-full flex items-center justify-center p-2 rounded-lg hover:bg-gray-700 transition-colors"
-            >
-              {isCollapsed ? (
-                <ChevronRight className="text-amber-400" size={20} />
-              ) : (
-                <>
-                  <ChevronLeft className="text-amber-400" size={20} />
-                  {!isMobile && (
+          {/* Collapse Button - Hidden on mobile */}
+          {!isMobile && (
+            <div className="p-4 border-t border-gray-700">
+              <button
+                onClick={toggleSidebar}
+                className="w-full flex items-center justify-center p-2 rounded-lg hover:bg-gray-700 transition-colors"
+              >
+                {isCollapsed ? (
+                  <ChevronRight style={{ color: "#fe5725" }} size={20} />
+                ) : (
+                  <>
+                    <ChevronLeft style={{ color: "#fe5725" }} size={20} />
                     <span className="ml-2 text-gray-300">Collapse</span>
-                  )}
-                </>
-              )}
-            </button>
-          </div>
+                  </>
+                )}
+              </button>
+            </div>
+          )}
         </div>
       </aside>
 
-      {/* Very subtle overlay for mobile - barely visible */}
+      {/* Very subtle overlay for mobile */}
       {isMobile && isMobileMenuOpen && (
         <div
           className="fixed inset-0 bg-gray-900 bg-opacity-10 z-30 md:hidden"
