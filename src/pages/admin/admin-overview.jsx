@@ -1,7 +1,6 @@
 import React from "react";
 
 const AdminOverview = () => {
-  console.log("AdminOverview component is trying to render!");
   return (
     <div>
       <h1>Admin Overview</h1>
