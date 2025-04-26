@@ -9,6 +9,7 @@ const AdminMain = lazy(() => import("./section/admin-main"));
 // Main Pages
 const Home = lazy(() => import("../pages/main/home"));
 const Order = lazy(() => import("../pages/main/order"));
+const Restaurant = lazy(() => import("../pages/main/resturant"));
 
 // Admin Pages
 const AdminOverview = lazy(() => import("../pages/admin/admin-overview"));
@@ -36,6 +37,10 @@ export const router = createBrowserRouter([
          }
         ]
        
+      },
+      {
+        path: "restaurant/:id",
+        Component: Restaurant,
       },
     ],
   },
