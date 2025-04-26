@@ -1,5 +1,6 @@
 import { lazy } from "react";
 import { createBrowserRouter } from "react-router-dom";
+import ProtectedRoute from "../auth/ProtectedRoute";
 
 // Layouts
 const Main = lazy(() => import("./section/main"));
@@ -27,8 +28,14 @@ export const router = createBrowserRouter([
         Component: Home,
       },
       {
-        path: "order",
-        Component: Order,
+        Component: ProtectedRoute,
+        children:[
+         {
+          path: "order",
+          Component: Order,
+         }
+        ]
+       
       },
     ],
   },
