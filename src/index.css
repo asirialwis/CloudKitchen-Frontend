@@ -1,11 +1,9 @@
 @import "tailwindcss";
 
 @plugin "daisyui" {
+  themes: business --default, dark;
+}
 
-  themes: light --default , dark 
-  
- }
-
- /* @utility btn {
+/* @utility btn {
   @apply rounded-full;
 } */
