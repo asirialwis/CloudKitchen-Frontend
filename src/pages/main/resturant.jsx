@@ -241,14 +241,21 @@ const Restaurant = () => {
                   className="bg-gray-50 rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 cursor-pointer"
                 >
                   <img
-                    src={food.imageUrl}
+                    src={
+                      food.imageUrl ||
+                      "https://via.placeholder.com/400x300?text=Food+Item"
+                    }
                     alt={food.name}
                     className="w-full h-48 object-cover"
+                    onError={(e) => {
+                      e.target.src =
+                        "https://via.placeholder.com/400x300?text=Food+Item";
+                    }}
                   />
                   <div className="p-4">
                     <h3 className="font-bold text-lg">{food.name}</h3>
                     <p className="text-gray-600 text-sm mt-1">
-                      {food.description}
+                      {food.description || "No description available."}
                     </p>
                     <div className="flex justify-between items-center mt-4">
                       <span className="font-bold text-[#fe5725]">
