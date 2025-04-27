@@ -2,6 +2,7 @@ import { lazy } from "react";
 import { createBrowserRouter } from "react-router-dom";
 import ProtectedRoute from "../auth/ProtectedRoute";
 
+
 // Layouts
 const Main = lazy(() => import("./section/main"));
 const AdminMain = lazy(() => import("./section/admin-main"));
@@ -14,6 +15,8 @@ const Restaurant = lazy(() => import("../pages/main/resturant"));
 // Admin Pages
 const AdminOverview = lazy(() => import("../pages/admin/admin-overview"));
 const AdminUsers = lazy(() => import("../pages/admin/admin-users"));
+
+const DeliveryRider = lazy(() => import("../pages/admin/delivery-rider"));
 
 //Auth Pages
 import Register from "../pages/auth/register";
@@ -56,6 +59,10 @@ export const router = createBrowserRouter([
         path: "users",
         Component: AdminUsers,
       },
+      {
+        path: "delivery-rider",
+        Component: DeliveryRider,
+      }
     ],
   },
   {

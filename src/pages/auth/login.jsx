@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from 'jwt-decode'; // Updated import syntax
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -9,7 +10,7 @@ const Login = () => {
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate(); // Initialize the navigate function
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -34,8 +35,28 @@ const Login = () => {
       localStorage.setItem("accessToken", response.data.accessToken);
       localStorage.setItem("refreshToken", response.data.refreshToken);
 
-      // Navigate to home page after successful login
-      navigate("/");
+      // Decode the access token to get user role using jwtDecode
+      const decodedToken = jwtDecode(response.data.accessToken);
+      const userRole = decodedToken.role;
+
+      localStorage.setItem("role", userRole);
+      // Navigate based on role
+      switch (userRole) {
+        case "customer":
+          navigate("/");
+          break;
+        case "restaurant-admin":
+          navigate("/admin");
+          break;
+        case "delivery":
+          navigate("/admin/delivery-rider");
+          break;
+        default:
+          // Handle unexpected roles
+          navigate("/");
+          console.warn("Unknown user role:", userRole);
+      }
+
     } catch (err) {
       setError(
         err.response?.data?.message || "Login failed. Please try again."
@@ -45,7 +66,6 @@ const Login = () => {
       setLoading(false);
     }
   };
-
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
       <div className="w-80 p-6 bg-white border border-gray-300 rounded-lg shadow-md">
