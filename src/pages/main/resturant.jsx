@@ -279,7 +279,7 @@ const Restaurant = () => {
       <div className="relative h-64 sm:h-48 overflow-hidden">
         <button
           onClick={() => navigate(-1)}
-          className="absolute top-4 left-4 bg-white text-[#fe5725] p-2 rounded-full shadow hover:bg-gray-100 transition z-10"
+          className="absolute top-4 left-4 bg-white text-[#fe5725] p-2 rounded-full shadow hover:bg-gray-100 transition z-10 cursor-pointer"
         >
           <ChevronLeft size={24} />
         </button>
