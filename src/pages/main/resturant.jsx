@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { ChevronLeft } from "lucide-react";
 import { toast } from "react-toastify";
 import QuantityModal from "../../components/yohan/QuantityModal";
+import axios from "axios";
 
 const Restaurant = () => {
   const { id } = useParams();
@@ -13,150 +14,29 @@ const Restaurant = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedFood, setSelectedFood] = useState(null);
 
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchMenuItems = async () => {
-      const allMenuItems = [
-        {
-          _id: "1",
-          restaurantId: "1",
-          name: "Chicken Biryani",
-          description: "Spicy basmati rice with marinated chicken and herbs",
-          price: 950,
-          imageUrl:
-            "https://i.pinimg.com/1200x/b2/f3/69/b2f369286e98dcecedab6988d2a5bda3.jpg",
-          category: "Main Course",
-          isAvailable: true,
-        },
-        {
-          _id: "2",
-          restaurantId: "1",
-          name: "Mutton Curry",
-          description: "Tender mutton pieces cooked in spicy gravy",
-          price: 1200,
-          imageUrl:
-            "https://i.pinimg.com/736x/e9/a5/92/e9a592bc11a55224937245014387e1d0.jpg",
-          category: "Main Course",
-          isAvailable: true,
-        },
-        {
-          _id: "3",
-          restaurantId: "1",
-          name: "Paneer Butter Masala",
-          description: "Cottage cheese cubes cooked in buttery tomato gravy",
-          price: 850,
-          imageUrl:
-            "https://i.pinimg.com/736x/93/4c/1f/934c1ff62dcfaaee84b9def1249b0884.jpg",
-          category: "Main Course",
-          isAvailable: true,
-        },
-        {
-          _id: "4",
-          restaurantId: "1",
-          name: "Veg Fried Rice",
-          description: "Rice stir-fried with colorful veggies",
-          price: 700,
-          imageUrl:
-            "https://i.pinimg.com/736x/c0/94/e0/c094e017caa0e1788c186906e420d17f.jpg",
-          category: "Main Course",
-          isAvailable: true,
-        },
-        {
-          _id: "5",
-          restaurantId: "1",
-          name: "Chicken Shawarma",
-          description: "Juicy chicken wrapped with veggies and sauces",
-          price: 600,
-          imageUrl:
-            "https://i.pinimg.com/736x/8b/19/4b/8b194bd990b3d283e335d14c9af692ac.jpg",
-          category: "Wraps",
-          isAvailable: true,
-        },
-        {
-          _id: "6",
-          restaurantId: "1",
-          name: "Cheese Pizza",
-          description: "Classic pizza topped with extra mozzarella cheese",
-          price: 1300,
-          imageUrl:
-            "https://i.pinimg.com/736x/a6/7c/18/a67c18e410a2aa22d3df52d26b3b3346.jpg",
-          category: "Pizza",
-          isAvailable: true,
-        },
-        {
-          _id: "7",
-          restaurantId: "1",
-          name: "Veg Burger",
-          description: "Crispy patty with fresh veggies and cheese",
-          price: 500,
-          imageUrl:
-            "https://images.unsplash.com/photo-1550317138-10000687a72b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-          category: "Burger",
-          isAvailable: true,
-        },
-        {
-          _id: "8",
-          restaurantId: "1",
-          name: "Chicken Wings",
-          description: "Spicy deep-fried chicken wings",
-          price: 950,
-          imageUrl:
-            "https://i.pinimg.com/736x/72/0a/9b/720a9b5e8d1ecaa4a51b1e942b1227ba.jpg",
-          category: "Snacks",
-          isAvailable: true,
-        },
-        {
-          _id: "9",
-          restaurantId: "1",
-          name: "French Fries",
-          description: "Crispy golden potato fries",
-          price: 400,
-          imageUrl:
-            "https://i.pinimg.com/736x/33/40/86/33408671a27acb4a1d49cd5a5a90d77b.jpg",
-          category: "Snacks",
-          isAvailable: true,
-        },
-        {
-          _id: "10",
-          restaurantId: "1",
-          name: "Chocolate Brownie",
-          description: "Rich chocolate brownie served warm",
-          price: 550,
-          imageUrl:
-            "https://i.pinimg.com/736x/f6/dc/b9/f6dcb957ca0195058bfc1fb6402e743b.jpg",
-          category: "Desserts",
-          isAvailable: true,
-        },
-        {
-          _id: "11",
-          restaurantId: "2",
-          name: "Mango Smoothie",
-          description: "Refreshing mango yogurt smoothie",
-          price: 450,
-          imageUrl:
-            "https://i.pinimg.com/474x/f7/f0/8d/f7f08d3c52eb1da211be9fa6671a0d68.jpg",
-          category: "Beverages",
-          isAvailable: true,
-        },
-        {
-          _id: "12",
-          restaurantId: "2",
-          name: "Lemon Iced Tea",
-          description: "Chilled lemon-flavored iced tea",
-          price: 300,
-          imageUrl:
-            "https://i.pinimg.com/736x/71/d0/e7/71d0e72e00cbe1b48045e09ec0f58f8d.jpg",
-          category: "Beverages",
-          isAvailable: true,
-        },
-      ];
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/api/restaurant-service/menus/${id}`
+        );
 
-      const filteredItems = allMenuItems.filter(
-        (item) => item.restaurantId === id && item.isAvailable
-      );
-
-      setMenuItems(filteredItems);
+        // Filter only available menu items
+        const availableItems = response.data.filter((item) => item.isAvailable);
+        setMenuItems(availableItems);
+        setLoading(false);
+      } catch (err) {
+        setError(
+          err.response?.data?.message ||
+            err.message ||
+            "Failed to fetch menu items"
+        );
+        setLoading(false);
+      }
     };
 
     fetchMenuItems();
@@ -272,6 +152,31 @@ const Restaurant = () => {
     selectedCategory === "All"
       ? Object.values(groupedMenu).flat()
       : groupedMenu[selectedCategory] || [];
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#fe5725]"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-red-500 text-center p-4 max-w-md">
+          <p className="text-xl font-medium mb-2">Error loading menu</p>
+          <p className="mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-4 bg-[#fe5725] text-white px-4 py-2 rounded hover:bg-[#e04a20] transition"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
