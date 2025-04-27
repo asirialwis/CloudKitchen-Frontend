@@ -16,10 +16,33 @@ const Header = ({ user }) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [notifications, setNotifications] = useState(3);
-  const [cartItems, setCartItems] = useState(2);
+  const [cartItems, setCartItems] = useState(0);
   const [activeOrders, setActiveOrders] = useState(1);
   const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
+
+  const updateCartCount = () => {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const totalQuantity = cart.reduce(
+      (acc, item) => acc + (item.quantity || 1),
+      0
+    );
+    setCartItems(totalQuantity);
+  };
+
+  useEffect(() => {
+    updateCartCount();
+
+    const handleStorageChange = () => {
+      updateCartCount();
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+    };
+  }, []);
 
   // Check screen size on resize
   useEffect(() => {
@@ -59,13 +82,12 @@ const Header = ({ user }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-
-  const  handleLogout = async () => {
+  const handleLogout = async () => {
     try {
       await signOut();
       // The signOut function will handle the redirect
     } catch (error) {
-      console.error('Logout failed:', error);
+      console.error("Logout failed:", error);
     }
   };
 
@@ -113,7 +135,7 @@ const Header = ({ user }) => {
               isOpen={isProfileOpen}
               toggle={toggleProfile}
               mobile
-              onLogout={handleLogout} 
+              onLogout={handleLogout}
             />
           </div>
         )}
@@ -168,7 +190,7 @@ const IconButton = ({ icon, count, onClick }) => (
 );
 
 // Profile Menu Component
-const ProfileMenu = ({ user, isOpen, toggle, mobile = false,onLogout }) => (
+const ProfileMenu = ({ user, isOpen, toggle, mobile = false, onLogout }) => (
   <div className={`relative ${mobile ? "ml-2" : ""} profile-menu`}>
     <button
       onClick={toggle}
@@ -210,13 +232,13 @@ const ProfileMenu = ({ user, isOpen, toggle, mobile = false,onLogout }) => (
           Settings
         </a>
         <a></a>
- <button
- onClick={onLogout}
- className="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
->
- <LogOut size={16} className="mr-2" />
- Logout
-</button>
+        <button
+          onClick={onLogout}
+          className="w-full text-left block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+        >
+          <LogOut size={16} className="mr-2" />
+          Logout
+        </button>
       </div>
     )}
   </div>
