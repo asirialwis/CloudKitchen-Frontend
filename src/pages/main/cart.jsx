@@ -35,6 +35,7 @@ const CartPage = () => {
     setCartItems(updatedCart);
     localStorage.setItem("cart", JSON.stringify(updatedCart));
     window.dispatchEvent(new Event("storage"));
+    console.log("Checkout initiated with items:", cartItems);
   };
 
   const totalAmount = cartItems.reduce(
@@ -43,6 +44,7 @@ const CartPage = () => {
   );
 
   const handleCheckOut = async () => {
+    console.log("Checkout initiated with items:", cartItems);
     if (cartItems.length === 0) {
       toast.error("Your cart is empty!", {
         position: "top-right",
