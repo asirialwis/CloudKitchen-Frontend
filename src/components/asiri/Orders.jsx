@@ -4,6 +4,7 @@ import { logout } from '../../auth/auth';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, CheckCircle, Clock, XCircle, ChevronDown, ChevronUp, Package, Bike,Truck } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import CancelOrderButton from './CancelOrderButton';
 
 // Status colors with improved contrast
 const statusColors = {
@@ -506,13 +507,10 @@ const Orders = () => {
                           )}
                           
                           {(order.status === 'preparing' || order.status === 'searching-drivers' || order.status === 'pending') && (
-                            <motion.button
-                              whileHover={{ scale: 1.03 }}
-                              whileTap={{ scale: 0.98 }}
-                              className="px-4 py-2 bg-red-50 text-red-600 border border-red-100 rounded-lg hover:bg-red-100 transition-colors flex items-center"
-                            >
-                              <XCircle size={18} className="mr-2" /> Cancel Order
-                            </motion.button>
+                            <CancelOrderButton 
+                            orderId={order._id}
+                            // onCancelSuccess={handleCancelSuccess}
+                          />
                           )}
                           
                           {order.status === 'delivered' && (
