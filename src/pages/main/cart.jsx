@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ChevronLeft, ShoppingCart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { createCheckoutSession } from "../../api-calls/payment-API";
 
 const CartPage = () => {
   const [cartItems, setCartItems] = useState([]);
@@ -41,8 +42,19 @@ const CartPage = () => {
     0
   );
 
-  const handlePayNow = () => {
-    alert(`You have to pay Rs. ${totalAmount}`);
+  const handleCheckOut = async () => {
+    if (cartItems.length === 0) {
+      toast.error("Your cart is empty!", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
+    await createCheckoutSession(cartItems);
   };
 
   return (
@@ -131,7 +143,7 @@ const CartPage = () => {
             <div className="bg-white shadow rounded-lg p-6 flex flex-col sm:flex-row justify-between items-center gap-4">
               <h2 className="text-2xl font-bold">Total: Rs. {totalAmount}</h2>
               <button
-                onClick={handlePayNow}
+                onClick={handleCheckOut}
                 className="w-full sm:w-auto px-6 py-3 bg-[#fe5725] text-white font-semibold rounded-full hover:scale-105 hover:bg-[#e04a20] transition transform cursor-pointer"
               >
                 Pay Now
