@@ -1,6 +1,8 @@
 // src/auth/auth.js
 import { jwtDecode } from 'jwt-decode';
 import api from './api'; // Your configured axios instance with interceptors
+import { toast } from 'react-toastify';
+import axios from 'axios';
 
 export const isAuthenticated = () => {
   const token = localStorage.getItem('accessToken');
@@ -25,23 +27,60 @@ export const isTokenExpired = (token) => {
 export const logout = () => {
   localStorage.removeItem('accessToken');
   localStorage.removeItem('refreshToken');
-  window.location.href = '/login';
+  
+  toast.info('You have been logged out.', {
+    position: "top-center",
+    autoClose: 2000,
+    hideProgressBar: true,
+    closeOnClick: true,
+    pauseOnHover: false,
+    draggable: false,
+  });
+  setTimeout(() => {
+    window.location.href = '/login';
+  }, 2000); // Wait for the toast to show before redirect
 };
-
-
 export const signOut = async () => {
   try {
-    // Call backend signout endpoint
-    await api.post('/auth-service/user/signout');
+    const refreshToken = localStorage.getItem('refreshToken');
+
+    const response = await axios.post('http://localhost:5001/user/signout', null, {
+      headers: {
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    });
+
+    toast.info('Signed out successfully.', {
+      position: "top-center",
+      autoClose: 2000,
+      style: {
+        backgroundColor: '#fff',
+        color: '#FFA500',
+        fontWeight: 'bold',
+      },
+      icon: '👋',
+    });
   } catch (error) {
-    console.error('Logout error:', error);
+    toast.error('Server logout failed.', {
+      position: "top-center",
+      autoClose: 3000,
+      style: {
+        backgroundColor:'#fff' ,
+        color: '#FFA500',
+        fontWeight: 'bold',
+      },
+      icon: '⚠️',
+    });
   } finally {
-    // Always clear local tokens
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
-    window.location.href = '/login';
+
+    setTimeout(() => {
+      window.location.href = '/';
+    }, 1000);
   }
-}
+};
+
 
 export const getAccessToken = () => {
   return localStorage.getItem('accessToken');

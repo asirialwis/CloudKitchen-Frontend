@@ -1,5 +1,5 @@
 // src/api/ordersAPI.js
-import api from '../auth/api'; // Your configured axios instance with interceptors
+import api from '../auth/api'; 
 
 export const fetchCustomerOrders = async () => {
   try {
