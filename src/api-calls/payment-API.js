@@ -1,12 +1,12 @@
 import stripePromise from "../stripe";
-import { toast } from "react-toastify"; // Correct import
+import { toast } from "react-toastify";
 
 export const createCheckoutSession = async (cartItems) => {
   try {
     const stripe = await stripePromise;
 
     const response = await fetch(
-      "http://localhost:5006/api/payment/create-checkout-session",
+      "http://localhost:3000/api/payment-service/create-checkout-session",
       {
         method: "POST",
         headers: {
