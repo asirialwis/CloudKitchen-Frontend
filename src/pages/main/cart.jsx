@@ -87,21 +87,21 @@ const CartPage = () => {
                   <div className="flex items-center bg-gray-100 p-1 rounded-full">
                     <button
                       onClick={() => updateQuantity(item._id, -1)}
-                      className="px-3 py-1 text-lg font-bold text-[#fe5725] hover:bg-gray-200 rounded-full"
+                      className="px-3 py-1 text-lg font-bold text-[#fe5725] hover:bg-gray-200 rounded-full cursor-pointer"
                     >
                       -
                     </button>
                     <span className="px-4 font-semibold">{item.quantity}</span>
                     <button
                       onClick={() => updateQuantity(item._id, 1)}
-                      className="px-3 py-1 text-lg font-bold text-[#fe5725] hover:bg-gray-200 rounded-full"
+                      className="px-3 py-1 text-lg font-bold text-[#fe5725] hover:bg-gray-200 rounded-full cursor-pointer"
                     >
                       +
                     </button>
                   </div>
                   <button
                     onClick={() => removeItem(item._id)}
-                    className="text-red-500 hover:text-red-700 font-semibold text-sm"
+                    className="text-red-500 bg-red-100 rounded-full p-3 hover:text-red-700 font-semibold text-sm cursor-pointer"
                   >
                     Remove
                   </button>
