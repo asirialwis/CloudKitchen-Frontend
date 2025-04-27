@@ -117,7 +117,11 @@ const Header = ({ user }) => {
             count={activeOrders}
             onClick={() => navigate("/order")}
           />
-          <IconButton icon={<ShoppingCart size={20} />} count={cartItems} />
+          <IconButton
+            icon={<ShoppingCart size={20} />}
+            count={cartItems}
+            onClick={() => navigate("/cart")}
+          />
           <IconButton icon={<Bell size={20} />} count={notifications} />
           <ProfileMenu
             user={user}
@@ -156,6 +160,9 @@ const Header = ({ user }) => {
               <MobileMenuItem
                 icon={<ShoppingCart size={20} className="text-gray-700" />}
                 label={`Cart (${cartItems})`}
+                onClick={() => {
+                  navigate("/cart");
+                }}
               />
               <MobileMenuItem
                 icon={<Bell size={20} className="text-gray-700" />}
