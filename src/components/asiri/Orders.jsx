@@ -2,18 +2,30 @@ import React, { useState, useEffect } from 'react';
 import { fetchCustomerOrders } from '../../api-calls/ordersAPI';
 import { logout } from '../../auth/auth';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, CheckCircle, Clock, XCircle } from 'lucide-react';
+import { MapPin, CheckCircle, Clock, XCircle, ChevronDown, ChevronUp, Package, Bike,Truck } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
+// Status colors with improved contrast
 const statusColors = {
-  preparing: 'bg-blue-100 text-blue-800',
-  'searching-drivers': 'bg-purple-100 text-purple-800',
-  'on-the-way': 'bg-orange-100 text-orange-800',
-  delivered: 'bg-green-100 text-green-800',
-  cancelled: 'bg-red-100 text-red-800',
-  pending: 'bg-gray-100 text-gray-800'
+  preparing: 'bg-blue-100 text-blue-800 border border-blue-200',
+  'searching-drivers': 'bg-purple-100 text-purple-800 border border-purple-200',
+  'on-the-way': 'bg-orange-100 text-orange-800 border border-orange-200',
+  delivered: 'bg-green-100 text-green-800 border border-green-200',
+  cancelled: 'bg-red-100 text-red-800 border border-red-200',
+  pending: 'bg-gray-100 text-gray-800 border border-gray-200'
 };
 
-// Animation components for each status using emojis instead of Lucide icons
+// Status messages to provide context
+const statusMessages = {
+  preparing: "Your order is being prepared by the chef",
+  'searching-drivers': "We're finding a delivery partner for your order",
+  'on-the-way': "Your order is on its way to you",
+  delivered: "Your order has been delivered successfully",
+  cancelled: "This order has been cancelled",
+  pending: "Your order is waiting to be confirmed"
+};
+
+// Animation components for each status
 const PreparingAnimation = () => (
   <div className="relative w-16 h-16">
     <motion.div 
@@ -222,6 +234,41 @@ const Orders = () => {
     return () => clearInterval(intervalId);
   }, []);
 
+  // Format date and time from ISO string
+  const formatDateTime = (isoString) => {
+    const date = new Date(isoString);
+    
+    // Format date: Apr 27, 2025
+    const formattedDate = date.toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    });
+    
+    // Format time: 8:52 AM
+    const formattedTime = date.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true
+    });
+    
+    return { formattedDate, formattedTime };
+  };
+
+  const formatStatus = (status) => {
+    return status.split('-').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
+  };
+
+  // Calculate total price from items
+  const calculateItemTotal = (item) => {
+    if (item.itemId && item.itemId.price) {
+      return (item.itemId.price * item.quantity).toFixed(2);
+    }
+    return 'N/A';
+  };
+
   if (loading) return (
     <div className="flex justify-center items-center h-64">
       <motion.div 
@@ -238,22 +285,18 @@ const Orders = () => {
     </div>
   );
 
-  const formatStatus = (status) => {
-    return status.split('-').map(word => 
-      word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
-  };
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <motion.h1 
-        className="text-3xl font-bold text-gray-800 mb-8"
+      <motion.div
+        className="mb-8"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        Your Orders
-      </motion.h1>
+        <h1 className="text-3xl font-bold text-gray-800">Your Orders</h1>
+        <p className="text-gray-500 mt-2">Track and manage all your food deliveries</p>
+      </motion.div>
       
       <AnimatePresence>
         {orders.length === 0 ? (
@@ -262,142 +305,232 @@ const Orders = () => {
             animate={{ opacity: 1 }}
             className="bg-gray-50 rounded-lg p-8 text-center"
           >
-            <div className="flex flex-col items-center justify-center">
+            <div className="flex flex-col items-center justify-center py-12">
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: 0.5 }}
-                className="mb-4 text-6xl"
+                className="mb-6 text-6xl"
               >
-                🛵
+                🛍️
               </motion.div>
-              <p className="text-gray-500 text-lg">You haven't placed any orders yet.</p>
+              <h3 className="text-xl font-medium text-gray-700 mb-2">No Orders Yet</h3>
+              <p className="text-gray-500 text-lg max-w-md mx-auto">You haven't placed any orders yet. Explore restaurants and find your favorite meals!</p>
+              <motion.button
+               onClick={() => navigate('/')}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.98 }}
+                className="mt-6 px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
+              >
+                Browse Restaurants
+              </motion.button>
             </div>
           </motion.div>
         ) : (
           <div className="space-y-6">
-            {orders.map(order => (
-              <motion.div
-                key={order._id}
-                layout
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
-                className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-lg transition-shadow duration-300"
-                onClick={() => setSelectedOrder(selectedOrder === order._id ? null : order._id)}
-              >
-                <div className="p-6">
-                  <div className="flex items-start">
-                    <div className="flex-shrink-0 mr-4">
-                      {statusAnimations[order.status]}
-                    </div>
-                    
-                    <div className="flex-1">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h2 className="text-xl font-semibold text-gray-800">
-                            Order #{order._id.slice(-6).toUpperCase()}
-                          </h2>
-                          {order.restaurantId && (
-                            <p className="text-gray-600 mt-1 flex items-center">
-                              <MapPin size={14} className="mr-1" />
-                              {order.restaurantId.name}
+            {orders.map(order => {
+              const { formattedDate, formattedTime } = formatDateTime(order.createdAt);
+              
+              return (
+                <motion.div
+                  key={order._id}
+                  layout
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                  className="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100 hover:shadow-lg transition-shadow duration-300"
+                >
+                  <div className="p-6">
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 mr-6">
+                        {statusAnimations[order.status]}
+                      </div>
+                      
+                      <div className="flex-1">
+                        <div className="flex justify-between items-start">
+                          <div>
+                            <h2 className="text-xl font-semibold text-gray-800">
+                              Order #{order._id.slice(-6).toUpperCase()}
+                            </h2>
+                            
+                            {order.restaurantId && (
+                              <div className="mt-2">
+                                <p className="text-gray-700 font-medium flex items-center">
+                                  {order.restaurantId.name}
+                                </p>
+                                <p className="text-gray-500 text-sm flex items-center mt-1">
+                                  <MapPin size={14} className="mr-1 flex-shrink-0" />
+                                  {order.restaurantId.address}
+                                </p>
+                              </div>
+                            )}
+                            
+                            <div className="mt-3">
+                              <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${statusColors[order.status]}`}>
+                                <span className="mr-1">{statusIcons[order.status]}</span>
+                                {formatStatus(order.status)}
+                              </span>
+                              
+                              <p className="text-sm text-gray-600 mt-2">
+                                {statusMessages[order.status]}
+                              </p>
+                            </div>
+                          </div>
+                          
+                          <div className="text-right">
+                            <p className="text-sm text-gray-500 flex flex-col items-end">
+                              <span>{formattedDate}</span>
+                              <span className="text-gray-400">{formattedTime}</span>
                             </p>
-                          )}
-                          <div className="mt-2">
-                            <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${statusColors[order.status]}`}>
-                              <span className="mr-1">{statusIcons[order.status]}</span>
-                              {formatStatus(order.status)}
-                            </span>
+                            <p className="font-medium text-lg text-gray-900 mt-2">
+                              LKR {order.totalAmount.toFixed(2)}
+                            </p>
                           </div>
                         </div>
-                        
-                        <div className="text-right">
-                          <p className="text-sm text-gray-500">
-                            {new Date(order.createdAt).toLocaleDateString()}
-                          </p>
-                          <p className="font-medium text-gray-900 mt-1">
-                            LKR {order.totalAmount.toFixed(2)}
-                          </p>
+
+                        <div className="mt-4 pt-4 border-t border-gray-100">
+                          <button 
+                            onClick={() => setSelectedOrder(selectedOrder === order._id ? null : order._id)}
+                            className="flex items-center text-orange-500 hover:text-orange-600 transition-colors font-medium"
+                          >
+                            {selectedOrder === order._id ? (
+                              <>
+                                <span>Hide details</span>
+                                <ChevronUp size={18} className="ml-1" />
+                              </>
+                            ) : (
+                              <>
+                                <span>View order details</span>
+                                <ChevronDown size={18} className="ml-1" />
+                              </>
+                            )}
+                          </button>
                         </div>
-                      </div>
 
-                      <AnimatePresence>
-                        {selectedOrder === order._id && (
-                          <motion.div 
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: "auto" }}
-                            exit={{ opacity: 0, height: 0 }}
-                            transition={{ duration: 0.3 }}
-                            className="mt-4 overflow-hidden"
-                          >
-                            <h3 className="font-medium text-gray-700 mb-2">Items:</h3>
-                            <div className="space-y-3">
-                              {order.items.map((item, index) => (
-                                <motion.div
-                                  key={item._id}
-                                  initial={{ opacity: 0 }}
-                                  animate={{ opacity: 1 }}
-                                  transition={{ delay: index * 0.1 }}
-                                  className="flex items-start p-3 bg-gray-50 rounded-lg"
-                                >
-                                  <div className="w-16 h-16 bg-gray-200 rounded-md mr-3 flex items-center justify-center text-gray-400">
-                                    {item.itemId?.imageUrl ? (
-                                      <img 
-                                        src={item.itemId.imageUrl} 
-                                        alt={item.itemId.name}
-                                        className="w-full h-full object-cover rounded-md"
-                                      />
-                                    ) : (
-                                      <motion.div
-                                        animate={{ rotate: [0, 10, -10, 0] }}
-                                        transition={{ duration: 2, repeat: Infinity }}
-                                        className="text-3xl"
-                                      >
-                                        🍔
-                                      </motion.div>
-                                    )}
+                        <AnimatePresence>
+                          {selectedOrder === order._id && (
+                            <motion.div 
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: "auto" }}
+                              exit={{ opacity: 0, height: 0 }}
+                              transition={{ duration: 0.3 }}
+                              className="mt-4 overflow-hidden"
+                            >
+                              <div className="bg-gray-50 rounded-lg p-4">
+                                <h3 className="font-medium text-gray-700 mb-3 flex items-center">
+                                  <Package size={16} className="mr-2" />
+                                  Order Items
+                                </h3>
+                                
+                                <div className="space-y-3">
+                                  {order.items.map((item, index) => (
+                                    <motion.div
+                                      key={item._id}
+                                      initial={{ opacity: 0 }}
+                                      animate={{ opacity: 1 }}
+                                      transition={{ delay: index * 0.1 }}
+                                      className="flex items-start p-3 bg-white rounded-lg border border-gray-100"
+                                    >
+                                      <div className="w-16 h-16 bg-gray-100 rounded-md mr-3 flex items-center justify-center overflow-hidden">
+                                        {item.itemId?.imageUrl ? (
+                                          <img 
+                                            src={item.itemId.imageUrl} 
+                                            alt={item.itemId.name}
+                                            className="w-full h-full object-cover rounded-md"
+                                          />
+                                        ) : (
+                                          <motion.div
+                                            animate={{ rotate: [0, 10, -10, 0] }}
+                                            transition={{ duration: 2, repeat: Infinity }}
+                                            className="text-3xl"
+                                          >
+                                            🍔
+                                          </motion.div>
+                                        )}
+                                      </div>
+                                      <div className="flex-1">
+                                        <div className="flex justify-between">
+                                          <h4 className="font-medium text-gray-800">
+                                            {item.itemId?.name || 'Unknown Item'}
+                                          </h4>
+                                          <span className="font-medium text-gray-700">
+                                            LKR {calculateItemTotal(item)}
+                                          </span>
+                                        </div>
+                                        <p className="text-sm text-gray-500 line-clamp-2 mt-1">
+                                          {item.itemId?.description || 'No description available'}
+                                        </p>
+                                        <div className="flex justify-between items-center mt-2">
+                                          <span className="text-sm text-gray-500">
+                                            LKR {item.itemId?.price?.toFixed(2) || 'N/A'} each
+                                          </span>
+                                          <span className="text-sm bg-gray-100 px-2 py-1 rounded">
+                                            Qty: {item.quantity}
+                                          </span>
+                                        </div>
+                                      </div>
+                                    </motion.div>
+                                  ))}
+                                </div>
+                                
+                                {/* Order Summary */}
+                                <div className="mt-4 pt-3 border-t border-gray-200">
+                                  <div className="flex justify-between text-sm text-gray-600 mb-1">
+                                    <span>Subtotal</span>
+                                    <span>LKR {(order.totalAmount * 0.9).toFixed(2)}</span>
                                   </div>
-                                  <div className="flex-1">
-                                    <h4 className="font-medium text-gray-800">
-                                      {item.itemId?.name || 'Unknown Item'}
-                                    </h4>
-                                    <p className="text-sm text-gray-500 line-clamp-2">
-                                      {item.itemId?.description || 'No description available'}
-                                    </p>
-                                    <div className="flex justify-between items-center mt-1">
-                                      <span className="text-sm font-medium">
-                                        LKR {item.itemId?.price?.toFixed(2) || 'N/A'}
-                                      </span>
-                                      <span className="text-sm text-gray-500">
-                                        Qty: {item.quantity}
-                                      </span>
-                                    </div>
+                                  <div className="flex justify-between text-sm text-gray-600 mb-1">
+                                    <span>Delivery Fee</span>
+                                    <span>LKR {(order.totalAmount * 0.1).toFixed(2)}</span>
                                   </div>
-                                </motion.div>
-                              ))}
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
+                                  <div className="flex justify-between font-medium text-gray-800 mt-2 pt-2 border-t border-gray-200">
+                                    <span>Total</span>
+                                    <span>LKR {order.totalAmount.toFixed(2)}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
 
-                      <div className="mt-4 flex justify-end">
-                        {order.status === 'on-the-way' && (
-                          <motion.button
-                            whileHover={{ scale: 1.03 }}
-                            whileTap={{ scale: 0.98 }}
-                            className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors flex items-center"
-                          >
-                            <MapPin size={16} className="mr-2" /> Track Order
-                          </motion.button>
-                        )}
+                        <div className="mt-4 flex justify-end space-x-3">
+                          {order.status === 'on-the-way' && (
+                            <motion.button
+                              whileHover={{ scale: 1.03 }}
+                              whileTap={{ scale: 0.98 }}
+                              className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors flex items-center shadow-sm"
+                            >
+                              <Truck size={18} className="mr-2" /> Track Order
+                            </motion.button>
+                          )}
+                          
+                          {(order.status === 'preparing' || order.status === 'searching-drivers' || order.status === 'pending') && (
+                            <motion.button
+                              whileHover={{ scale: 1.03 }}
+                              whileTap={{ scale: 0.98 }}
+                              className="px-4 py-2 bg-red-50 text-red-600 border border-red-100 rounded-lg hover:bg-red-100 transition-colors flex items-center"
+                            >
+                              <XCircle size={18} className="mr-2" /> Cancel Order
+                            </motion.button>
+                          )}
+                          
+                          {order.status === 'delivered' && (
+                            <motion.button
+                              whileHover={{ scale: 1.03 }}
+                              whileTap={{ scale: 0.98 }}
+                              className="px-4 py-2 bg-gray-50 text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors flex items-center"
+                            >
+                              Reorder
+                            </motion.button>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              );
+            })}
           </div>
         )}
       </AnimatePresence>
