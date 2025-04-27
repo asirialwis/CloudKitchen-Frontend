@@ -27,6 +27,7 @@ export const isTokenExpired = (token) => {
 export const logout = () => {
   localStorage.removeItem('accessToken');
   localStorage.removeItem('refreshToken');
+  localStorage.removeItem('role');
   
   toast.info('You have been logged out.', {
     position: "top-center",
@@ -74,6 +75,7 @@ export const signOut = async () => {
   } finally {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
+    localStorage.removeItem('role');
 
     setTimeout(() => {
       window.location.href = '/';

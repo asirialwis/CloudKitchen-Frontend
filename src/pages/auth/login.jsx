@@ -39,6 +39,7 @@ const Login = () => {
       const decodedToken = jwtDecode(response.data.accessToken);
       const userRole = decodedToken.role;
 
+      localStorage.setItem("role", userRole);
       // Navigate based on role
       switch (userRole) {
         case "customer":
