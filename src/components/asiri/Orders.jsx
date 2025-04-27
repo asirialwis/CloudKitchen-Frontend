@@ -361,7 +361,7 @@ const Orders = () => {
               <h3 className="text-xl font-medium text-gray-700 mb-2">No Orders Yet</h3>
               <p className="text-gray-500 text-lg max-w-md mx-auto">You haven't placed any orders yet. Explore restaurants and find your favorite meals!</p>
               <motion.button
-               onClick={() => navigate('/')}
+               onClick={() => window.location.href = '/'}
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.98 }}
                 className="mt-6 px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"

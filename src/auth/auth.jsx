@@ -77,7 +77,7 @@ export const signOut = async () => {
 
     setTimeout(() => {
       window.location.href = '/';
-    }, 2000);
+    }, 1000);
   }
 };
 
