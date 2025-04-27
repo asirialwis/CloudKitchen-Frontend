@@ -61,41 +61,84 @@ const PreparingAnimation = () => (
 
 const SearchingDriversAnimation = () => (
   <div className="relative w-16 h-16">
-    <motion.div 
-      className="absolute inset-0 flex items-center justify-center"
-      animate={{ rotate: 360 }}
-      transition={{ 
-        repeat: Infinity,
-        duration: 6,
-        ease: "linear" 
-      }}
-    >
-      <div className="relative">
+    <div className="absolute inset-0 flex items-center justify-center">
+      {/* Pulsing background circle */}
+      <motion.div
+        className="w-12 h-12 rounded-full border-2 border-purple-300 absolute"
+        animate={{ 
+          scale: [0.8, 1.1, 0.8],
+          opacity: [0.7, 1, 0.7]
+        }}
+        transition={{
+          repeat: Infinity,
+          duration: 2.5,
+          ease: "easeInOut"
+        }}
+      />
+      
+      {/* Magnifying glass with scanning motion */}
+      <motion.div
+        className="absolute"
+        initial={{ x: -10, y: -10 }}
+        animate={{
+          x: [
+            -10, -5, 0, 5, 10, 5, 0, -5, -10
+          ],
+          y: [
+            -10, -5, 0, 5, 10, 5, 0, -5, -10
+          ]
+        }}
+        transition={{
+          repeat: Infinity,
+          duration: 4,
+          ease: "linear",
+          times: [0, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75, 0.875, 1]
+        }}
+      >
         <motion.div
-          className="w-12 h-12 rounded-full border-2 border-purple-300 absolute"
-          initial={{ scale: 0.8 }}
-          animate={{ scale: [0.8, 1.1, 0.8] }}
-          transition={{ 
-            repeat: Infinity,
-            duration: 2
+          animate={{
+            rotate: [-10, 10, -10],
+            scale: [1, 1.1, 1]
           }}
-        />
-        <motion.div
-          className="absolute"
-          animate={{ 
-            rotate: 360,
-            x: [0, 8, 0, -8, 0],
-            y: [0, -8, 0, 8, 0]
-          }}
-          transition={{ 
+          transition={{
             repeat: Infinity,
-            duration: 4
+            duration: 2,
+            ease: "easeInOut"
           }}
         >
-          <div className="text-3xl">🚗</div>
+          <div className="text-3xl">🔍</div>
         </motion.div>
-      </div>
-    </motion.div>
+      </motion.div>
+      
+      {/* Small dots representing search results/drivers */}
+      <motion.div 
+        className="absolute w-2 h-2 bg-purple-500 rounded-full"
+        initial={{ opacity: 0, x: -8, y: 8 }}
+        animate={{ 
+          opacity: [0, 1, 0],
+          scale: [0.5, 1, 0.5]
+        }}
+        transition={{
+          repeat: Infinity, 
+          duration: 2,
+          delay: 1
+        }}
+      />
+      
+      <motion.div 
+        className="absolute w-2 h-2 bg-purple-500 rounded-full"
+        initial={{ opacity: 0, x: 8, y: -8 }}
+        animate={{ 
+          opacity: [0, 1, 0],
+          scale: [0.5, 1, 0.5]
+        }}
+        transition={{
+          repeat: Infinity, 
+          duration: 2,
+          delay: 0.5
+        }}
+      />
+    </div>
   </div>
 );
 
@@ -112,7 +155,7 @@ const OnTheWayAnimation = () => (
           ease: "easeInOut"
         }}
       >
-        <div className="text-4xl">🏎️</div>
+        <div className="text-4xl">🚴‍♂️</div>
       </motion.div>
     </div>
     <motion.div
