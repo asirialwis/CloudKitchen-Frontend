@@ -11,6 +11,9 @@ const AdminMain = lazy(() => import("./section/admin-main"));
 const Home = lazy(() => import("../pages/main/home"));
 const Order = lazy(() => import("../pages/main/order"));
 const Restaurant = lazy(() => import("../pages/main/resturant"));
+const Cart = lazy(() => import("../pages/main/cart"));
+const Success = lazy(() => import("../pages/main/success"));
+const Cancel = lazy(() => import("../pages/main/cancel"));
 const addItem = lazy(() => import("../pages/admin/add-item"));
 
 // Admin Pages
@@ -36,17 +39,28 @@ export const router = createBrowserRouter([
       },
       {
         Component: ProtectedRoute,
-        children:[
-         {
-          path: "order",
-          Component: Order,
-         }
-        ]
-       
+        children: [
+          {
+            path: "order",
+            Component: Order,
+          },
+        ],
       },
       {
         path: "restaurant/:id",
         Component: Restaurant,
+      },
+      {
+        path: "cart",
+        Component: Cart,
+      },
+      {
+        path: "success",
+        Component: Success,
+      },
+      {
+        path: "cancel",
+        Component: Cancel,
       },
     ],
   },
