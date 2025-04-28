@@ -49,7 +49,7 @@ const Login = () => {
           navigate("/admin");
           break;
         case "delivery":
-          navigate("/admin/delivery-rider");
+          navigate("/delivery-rider");
           break;
         default:
           // Handle unexpected roles

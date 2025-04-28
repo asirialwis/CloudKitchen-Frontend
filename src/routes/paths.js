@@ -11,6 +11,8 @@ const AdminMain = lazy(() => import("./section/admin-main"));
 const Home = lazy(() => import("../pages/main/home"));
 const Order = lazy(() => import("../pages/main/order"));
 const Restaurant = lazy(() => import("../pages/main/resturant"));
+const CustomerOrderTracking = lazy(() => import("../pages/main/CustomerOrderTracking"));
+const DriverNavigation = lazy(() => import("../pages/main/DriverNavigation"));
 
 // Admin Pages
 const AdminOverview = lazy(() => import("../pages/admin/admin-overview"));
@@ -45,6 +47,14 @@ export const router = createBrowserRouter([
         path: "restaurant/:id",
         Component: Restaurant,
       },
+      {
+        path: "orderTrack/:orderID",
+        Component: CustomerOrderTracking,
+      },
+      {
+        path: "delivery-rider",
+        Component: DriverNavigation,
+      }
     ],
   },
   {
@@ -59,10 +69,6 @@ export const router = createBrowserRouter([
         path: "users",
         Component: AdminUsers,
       },
-      {
-        path: "delivery-rider",
-        Component: DeliveryRider,
-      }
     ],
   },
   {
