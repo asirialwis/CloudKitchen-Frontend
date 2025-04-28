@@ -14,9 +14,13 @@ const Restaurant = lazy(() => import("../pages/main/resturant"));
 const Cart = lazy(() => import("../pages/main/cart"));
 const Success = lazy(() => import("../pages/main/success"));
 const Cancel = lazy(() => import("../pages/main/cancel"));
+const addItem = lazy(() => import("../pages/admin/add-item"));
+
 // Admin Pages
 const AdminOverview = lazy(() => import("../pages/admin/admin-overview"));
 const AdminUsers = lazy(() => import("../pages/admin/admin-users"));
+const AdminHome = lazy(() => import("../pages/admin/admin-home"));
+const AdminRestaurant = lazy(() => import("../pages/admin/admin-restaurant"));
 
 const DeliveryRider = lazy(() => import("../pages/admin/delivery-rider"));
 
@@ -75,7 +79,19 @@ export const router = createBrowserRouter([
       {
         path: "delivery-rider",
         Component: DeliveryRider,
-      }
+      },
+      {
+        path: "admin-home",
+        Component: AdminHome,
+      },
+      {
+        path: "restaurant/:id",
+        Component: AdminRestaurant,
+      },
+      {
+        path: "add-item",
+        Component: addItem,
+      },
     ],
   },
   {

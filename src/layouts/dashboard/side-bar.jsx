@@ -82,7 +82,7 @@ const Sidebar = () => {
       label: "Dashboard",
     },
     { path: "/orders", icon: <ShoppingCart size={20} />, label: "Orders" },
-    { path: "/menu", icon: <Utensils size={20} />, label: "Menu Management" },
+    { path: "/admin/admin-home", icon: <Utensils size={20} />, label: "Menu Management" },
     { path: "/inventory", icon: <Warehouse size={20} />, label: "Inventory" },
     { path: "/staff", icon: <UserCog size={20} />, label: "Staff Management" },
     { path: "/customers", icon: <Users size={20} />, label: "Customers" },
