@@ -1,6 +1,6 @@
 // src/auth/auth.js
 import { jwtDecode } from 'jwt-decode';
-import api from './api'; // Your configured axios instance with interceptors
+import api from './api'; 
 import { toast } from 'react-toastify';
 import axios from 'axios';
 

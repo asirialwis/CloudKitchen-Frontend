@@ -1,4 +1,3 @@
-// src/api/ordersAPI.js
 import api from '../auth/api'; 
 
 export const fetchCustomerOrders = async () => {
@@ -12,14 +11,11 @@ export const fetchCustomerOrders = async () => {
 };
 
 
-
-
-// src/api/ordersAPI.js
 export const cancelOrder = async (orderId) => {
   try {
     const response = await api.patch(
       `/order-service/order/cancel/${orderId}`,
-      {}, // empty body
+      {}, 
       {
         headers: {
           'Content-Type': 'application/json',
