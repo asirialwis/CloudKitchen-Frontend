@@ -250,6 +250,9 @@ const statusIcons = {
 };
 
 const Orders = () => {
+
+  const navigate = useNavigate()
+
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -544,6 +547,7 @@ const Orders = () => {
                               whileHover={{ scale: 1.03 }}
                               whileTap={{ scale: 0.98 }}
                               className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors flex items-center shadow-sm"
+                              onClick={() => navigate("orderTrack/680fd6cfe8c65f82051b1514")}
                             >
                               <Truck size={18} className="mr-2" /> Track Order
                             </motion.button>

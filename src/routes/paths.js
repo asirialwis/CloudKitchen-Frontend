@@ -2,7 +2,6 @@ import { lazy } from "react";
 import { createBrowserRouter } from "react-router-dom";
 import ProtectedRoute from "../auth/ProtectedRoute";
 
-
 // Layouts
 const Main = lazy(() => import("./section/main"));
 const AdminMain = lazy(() => import("./section/admin-main"));
@@ -11,7 +10,9 @@ const AdminMain = lazy(() => import("./section/admin-main"));
 const Home = lazy(() => import("../pages/main/home"));
 const Order = lazy(() => import("../pages/main/order"));
 const Restaurant = lazy(() => import("../pages/main/resturant"));
-const CustomerOrderTracking = lazy(() => import("../pages/main/CustomerOrderTracking"));
+const CustomerOrderTracking = lazy(() =>
+  import("../pages/main/CustomerOrderTracking")
+);
 const DriverNavigation = lazy(() => import("../pages/main/DriverNavigation"));
 const Cart = lazy(() => import("../pages/main/cart"));
 const Success = lazy(() => import("../pages/main/success"));
@@ -53,11 +54,11 @@ export const router = createBrowserRouter([
         Component: Restaurant,
       },
       {
-        path: "orderTrack/:orderID",
+        path: "order/orderTrack/:orderID",
         Component: CustomerOrderTracking,
       },
       {
-        path: "delivery-rider",
+        path: "deliveryRider/:orderID",
         Component: DriverNavigation,
       },
       {
