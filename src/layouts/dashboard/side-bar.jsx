@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import {
   LayoutDashboard,
   ShoppingCart,
@@ -13,6 +15,7 @@ import {
   ChevronRight,
   Menu,
   X,
+  LogOut,
 } from "lucide-react";
 
 const Sidebar = () => {
@@ -26,7 +29,9 @@ const Sidebar = () => {
 
   const [isMobile, setIsMobile] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const stored = localStorage.getItem("sidebarCollapsed");
@@ -35,7 +40,6 @@ const Sidebar = () => {
       : window.innerWidth >= 768;
     setIsCollapsed(initialCollapse);
 
-    // Dispatch initial state
     window.dispatchEvent(
       new CustomEvent("sidebarToggle", {
         detail: { isCollapsed: initialCollapse },
@@ -62,7 +66,6 @@ const Sidebar = () => {
     const newState = !isCollapsed;
     setIsCollapsed(newState);
 
-    // Dispatch custom event
     window.dispatchEvent(
       new CustomEvent("sidebarToggle", {
         detail: { isCollapsed: newState },
@@ -75,6 +78,39 @@ const Sidebar = () => {
     document.body.style.overflow = isMobileMenuOpen ? "auto" : "hidden";
   };
 
+  const handleLogoutClick = () => {
+    setShowLogoutModal(true);
+  };
+
+  const handleConfirmLogout = () => {
+    localStorage.clear();
+    sessionStorage.clear();
+    setShowLogoutModal(false);
+
+    toast.success("Logged out successfully!", {
+      position: "top-right",
+      autoClose: 3000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+      theme: "colored",
+    });
+
+    if (isMobile) {
+      setIsMobileMenuOpen(false);
+    }
+
+    setTimeout(() => {
+      navigate("/login");
+    }, 500);
+  };
+
+  const handleCancelLogout = () => {
+    setShowLogoutModal(false);
+  };
+
   const navItems = [
     {
       path: "/dashboard",
@@ -82,7 +118,11 @@ const Sidebar = () => {
       label: "Dashboard",
     },
     { path: "/orders", icon: <ShoppingCart size={20} />, label: "Orders" },
-    { path: "/admin/admin-home", icon: <Utensils size={20} />, label: "Menu Management" },
+    {
+      path: "/admin/admin-home",
+      icon: <Utensils size={20} />,
+      label: "Menu Management",
+    },
     { path: "/inventory", icon: <Warehouse size={20} />, label: "Inventory" },
     { path: "/staff", icon: <UserCog size={20} />, label: "Staff Management" },
     { path: "/customers", icon: <Users size={20} />, label: "Customers" },
@@ -183,6 +223,20 @@ const Sidebar = () => {
                   </Link>
                 </li>
               ))}
+
+              {/* Logout Button */}
+              <li>
+                <button
+                  onClick={handleLogoutClick}
+                  className={`w-full flex items-center p-3 rounded-lg transition-colors hover:bg-gray-700 text-red-400 hover:text-red-300 cursor-pointer
+                    ${isCollapsed && !isMobile ? "justify-center" : ""}`}
+                >
+                  <LogOut size={20} className="opacity-80" />
+                  {(!isCollapsed || isMobile) && (
+                    <span className="ml-3">Logout</span>
+                  )}
+                </button>
+              </li>
             </ul>
           </nav>
 
@@ -207,7 +261,31 @@ const Sidebar = () => {
         </div>
       </aside>
 
-      {/* Very subtle overlay for mobile */}
+      {/* Logout Confirmation Modal */}
+      {showLogoutModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full">
+            <h3 className="text-xl font-semibold mb-4">Confirm Logout</h3>
+            <p className="mb-6">Are you sure you want to log out?</p>
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={handleCancelLogout}
+                className="px-4 py-2 rounded-lg border border-gray-600 hover:bg-gray-700 transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmLogout}
+                className="px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white transition-colors cursor-pointer"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Mobile Menu Overlay */}
       {isMobile && isMobileMenuOpen && (
         <div
           className="fixed inset-0 bg-gray-900 bg-opacity-10 z-30 md:hidden"
