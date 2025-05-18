@@ -15,9 +15,9 @@ import {
 const Header = ({ user }) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [notifications, setNotifications] = useState(3);
+  const [notifications, setNotifications] = useState(0);
   const [cartItems, setCartItems] = useState(0);
-  const [activeOrders, setActiveOrders] = useState(1);
+  const [activeOrders, setActiveOrders] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
 
