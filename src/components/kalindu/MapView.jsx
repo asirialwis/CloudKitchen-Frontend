@@ -1,29 +1,65 @@
-// src/components/MapView.js
-import React from 'react';
-import { GoogleMap, LoadScript, Marker, DirectionsRenderer } from '@react-google-maps/api';
+// src/components/kalindu/MapView.js
+import React, { useState, useRef } from "react";
+import {
+  GoogleMap,
+  LoadScript,
+  Marker,
+  DirectionsRenderer,
+} from "@react-google-maps/api";
 
 const containerStyle = {
-  width: '100%',
-  height: '100vh'
+  width: "100%",
+  height: "500px",
+  borderRadius: "10px",
+  boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
 };
 
-const MapView = ({ center, markers = [], directions = null }) => {
-  const apiKey = "AIzaSyCjgDOFzVZR8aWVM4SoZMRO0Hw4Lb883Ec"; // store it in .env
+const MapView = ({
+  center,
+  markers = [],
+  directions = null,
+  initialZoom = 12,
+}) => {
+  const [zoom, setZoom] = useState(initialZoom);
+  const mapRef = useRef();
+
+  const onLoad = (map) => {
+    mapRef.current = map;
+  };
+
+  const onUnmount = () => {
+    mapRef.current = null;
+  };
 
   return (
-    <LoadScript googleMapsApiKey={apiKey}>
-      <GoogleMap
-        mapContainerStyle={containerStyle}
-        center={center}
-        zoom={13}
-      >
-        {markers.map((marker, index) => (
-          <Marker key={index} position={marker.position} />
-        ))}
-        
-        {directions && <DirectionsRenderer directions={directions} />}
-      </GoogleMap>
-    </LoadScript>
+    <GoogleMap
+      mapContainerStyle={containerStyle}
+      center={center}
+      zoom={zoom}
+      onLoad={onLoad}
+      onUnmount={onUnmount}
+      onZoomChanged={() => {
+        if (mapRef.current) {
+          setZoom(mapRef.current.getZoom());
+        }
+      }}
+      options={{
+        streetViewControl: false,
+        mapTypeControl: false,
+        fullscreenControl: false,
+      }}
+    >
+      {markers.map((marker, index) => (
+        <Marker
+          key={index}
+          position={marker.position}
+          label={marker.label}
+          title={marker.title}
+        />
+      ))}
+
+      {directions && <DirectionsRenderer directions={directions} />}
+    </GoogleMap>
   );
 };
 
