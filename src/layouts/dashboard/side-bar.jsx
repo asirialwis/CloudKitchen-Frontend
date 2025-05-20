@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   ShoppingCart,
@@ -13,6 +13,7 @@ import {
   ChevronRight,
   Menu,
   X,
+  LogOut,
 } from "lucide-react";
 
 const Sidebar = () => {
@@ -27,6 +28,7 @@ const Sidebar = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const stored = localStorage.getItem("sidebarCollapsed");
@@ -75,6 +77,20 @@ const Sidebar = () => {
     document.body.style.overflow = isMobileMenuOpen ? "auto" : "hidden";
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    localStorage.removeItem("userData");
+
+    // Close mobile menu if open
+    if (isMobile) {
+      setIsMobileMenuOpen(false);
+    }
+
+    // Redirect to login page
+    navigate("/login");
+  };
+
   const navItems = [
     {
       path: "/dashboard",
@@ -82,7 +98,11 @@ const Sidebar = () => {
       label: "Dashboard",
     },
     { path: "/orders", icon: <ShoppingCart size={20} />, label: "Orders" },
-    { path: "/admin/admin-home", icon: <Utensils size={20} />, label: "Menu Management" },
+    {
+      path: "/admin/admin-home",
+      icon: <Utensils size={20} />,
+      label: "Menu Management",
+    },
     { path: "/inventory", icon: <Warehouse size={20} />, label: "Inventory" },
     { path: "/staff", icon: <UserCog size={20} />, label: "Staff Management" },
     { path: "/customers", icon: <Users size={20} />, label: "Customers" },
@@ -183,6 +203,20 @@ const Sidebar = () => {
                   </Link>
                 </li>
               ))}
+
+              {/* Logout Button */}
+              <li>
+                <button
+                  onClick={handleLogout}
+                  className={`w-full flex items-center p-3 rounded-lg transition-colors hover:bg-gray-700 text-red-400 hover:text-red-300
+                    ${isCollapsed && !isMobile ? "justify-center" : ""}`}
+                >
+                  <LogOut size={20} className="opacity-80" />
+                  {(!isCollapsed || isMobile) && (
+                    <span className="ml-3">Logout</span>
+                  )}
+                </button>
+              </li>
             </ul>
           </nav>
 
@@ -218,4 +252,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default Sidebar;

@@ -107,7 +107,9 @@ const Header = ({ user }) => {
               {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           )}
-          <h1 className="text-xl font-bold">CloudKitchen</h1>
+          <div onClick={() => navigate("/")}>
+            <h1 className="text-xl font-bold cursor-pointer">CloudKitchen</h1>
+          </div>
         </div>
 
         {/* Desktop Icons */}
